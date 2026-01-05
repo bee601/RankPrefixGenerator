@@ -1,2 +1,285 @@
-# RankPrefixGenerator
-Rank prefix generator for minecraft [ItemsAdder]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prefix Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1f2428;
+      --panel: #0f1113;
+      --panel-2: #14171a;
+      --accent: #00aaff;
+      --accent-2: #00ccff;
+      --text: #e6e6e6;
+      --muted: #9aa4ad;
+      --danger: #e74c3c;
+      --success: #2ecc71;
+    }
+
+    * { box-sizing: border-box; font-family: Inter, system-ui, sans-serif; }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #22272b, #1b1f23);
+      color: var(--text);
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 700;
+      margin: 28px 0 16px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+    }
+
+    .preview {
+      background: radial-gradient(120% 120% at 50% 0%, #111, #000);
+      border-radius: 10px;
+      padding: 28px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.5);
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .prefix-box {
+      display: inline-block;
+      padding: 16px 26px;
+      font-weight: 800;
+      font-size: 42px;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: white;
+      text-shadow: 3px 3px 0 rgba(0,0,0,.35);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    button {
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-copy { background: #2d7cff; color: white; }
+    .btn-clear { background: #e05666; color: white; }
+    .btn-save { background: #27ae60; color: white; }
+
+    .panel {
+      background: linear-gradient(180deg, #0b0d0f, #060708);
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+    }
+
+    label {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #2a2f34;
+      background: #1c2126;
+      color: var(--text);
+    }
+
+    .color-row { margin-bottom: 16px; }
+
+    .color-input {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    input[type="color"] {
+      width: 44px;
+      height: 36px;
+      border: none;
+      background: none;
+      padding: 0;
+    }
+
+    .right-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .add-color {
+      background: #1f8f4d;
+      color: white;
+    }
+
+    .color-card {
+      background: #0f1316;
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+    }
+
+    .color-card header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .delete {
+      background: var(--danger);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Prefix Generator</h1>
+
+  <div class="container">
+    <div class="preview">
+      <div id="previewText" class="prefix-box">ARTILLEX-STUDIOS</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-copy" onclick="copyText()">Copy</button>
+      <button class="btn-clear" onclick="resetAll()">Clear</button>
+      <button class="btn-save" onclick="saveLocal()">Save</button>
+    </div>
+
+    <div class="panel">
+      <div class="grid">
+        <div>
+          <div class="color-row">
+            <label>Rank Name</label>
+            <input type="text" id="rankName" value="Artillex-Studios" oninput="updatePreview()">
+          </div>
+
+          <div class="color-row">
+            <label>Shadow Color</label>
+            <div class="color-input">
+              <input type="text" id="shadowHex" value="#22222244" oninput="updatePreview()">
+              <input type="color" value="#222222" oninput="shadowHex.value=this.value;updatePreview()">
+            </div>
+          </div>
+
+          <div class="color-row">
+            <label>Text Color</label>
+            <div class="color-input">
+              <input type="text" id="textHex" value="#ffffff" oninput="updatePreview()">
+              <input type="color" value="#ffffff" oninput="textHex.value=this.value;updatePreview()">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="right-header">
+            <button class="add-color" onclick="addColor()">Add New Color</button>
+            <span id="colorCount">2 colors</span>
+          </div>
+
+          <div id="colors"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const colors = ['#00aaff', '#00ccff'];
+
+    function renderColors() {
+      const wrap = document.getElementById('colors');
+      wrap.innerHTML = '';
+      colors.forEach((c, i) => {
+        wrap.innerHTML += `
+          <div class="color-card">
+            <header>
+              <strong>Background Color ${i + 1}</strong>
+              <button class="delete" onclick="removeColor(${i})">🗑</button>
+            </header>
+            <div class="color-input">
+              <input type="text" value="${c}" oninput="colors[${i}]=this.value;updatePreview()">
+              <input type="color" value="${c}" oninput="colors[${i}]=this.value;renderColors();updatePreview()">
+            </div>
+          </div>`;
+      });
+      document.getElementById('colorCount').textContent = `${colors.length} colors`;
+    }
+
+    function updatePreview() {
+      const text = document.getElementById('rankName').value.toUpperCase();
+      const shadow = document.getElementById('shadowHex').value;
+      const textColor = document.getElementById('textHex').value;
+      const preview = document.getElementById('previewText');
+
+      preview.textContent = text;
+      preview.style.color = textColor;
+      preview.style.textShadow = `4px 4px 0 ${shadow}`;
+      preview.style.background = `linear-gradient(90deg, ${colors.join(',')})`;
+    }
+
+    function addColor() {
+      colors.push('#00ffff');
+      renderColors();
+      updatePreview();
+    }
+
+    function removeColor(i) {
+      colors.splice(i, 1);
+      renderColors();
+      updatePreview();
+    }
+
+    function copyText() {
+      navigator.clipboard.writeText(document.getElementById('previewText').textContent);
+      alert('Copied!');
+    }
+
+    function resetAll() {
+      document.getElementById('rankName').value = '';
+      updatePreview();
+    }
+
+    function saveLocal() {
+      localStorage.setItem('prefix', document.getElementById('previewText').textContent);
+      alert('Saved locally');
+    }
+
+    renderColors();
+    updatePreview();
+  </script>
+</body>
+</html>
