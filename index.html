@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pixel Prefix Generator</title>
+  <title>Minecraft Prefix Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
@@ -12,99 +12,98 @@
       --bg: #1f2428;
       --panel: #0f1113;
       --text: #e6e6e6;
-      --muted: #9aa4ad;
-      --accent: #00aaff;
+      --accent: #ff0000;
     }
 
-    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    * { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
 
     body {
       margin: 0;
       background: #1b1f23;
       color: var(--text);
-      padding-bottom: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
     }
 
-    h1 { text-align: center; margin: 30px 0; font-family: 'Silkscreen', sans-serif; }
+    h1 { font-family: 'Silkscreen', sans-serif; font-size: 24px; margin-bottom: 20px; }
 
-    .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+    .container { width: 100%; max-width: 600px; padding: 0 20px; }
 
-    /* PREVIEW BEREICH - WICHTIG FÜR DEN LOOK */
-    .preview {
+    /* Die Vorschau im Browser */
+    .preview-area {
       background: #000;
-      border-radius: 8px;
-      padding: 40px;
-      margin-bottom: 20px;
+      padding: 50px;
+      border-radius: 12px;
       display: flex;
       justify-content: center;
       align-items: center;
-      image-rendering: pixelated; /* Erhält Pixelkanten im Browser */
+      margin-bottom: 20px;
+      image-rendering: pixelated;
     }
 
     .prefix-box {
       display: inline-block;
-      padding: 0 4px;
-      height: 10px; /* Etwas Puffer für die 8px Schrift */
-      line-height: 10px;
+      padding: 1px 4px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid var(--accent);
+      color: #fff;
       font-family: 'Silkscreen', sans-serif;
-      font-size: 8px;
-      font-weight: 700;
+      font-size: 10px; /* Größer für die Browser-Vorschau */
+      line-height: 1;
       text-transform: uppercase;
-      white-space: nowrap;
-      color: white;
-      -webkit-font-smoothing: none; /* Deaktiviert Schriftglättung */
+      -webkit-font-smoothing: none;
     }
 
+    /* Generator Panel */
     .panel {
-      background: #0f1113;
-      border-radius: 10px;
+      background: var(--panel);
       padding: 25px;
-      border: 1px solid #2a2f34;
+      border-radius: 12px;
+      border: 1px solid #333;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-
-    .color-row { margin-bottom: 15px; }
-    label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 5px; }
+    .input-group { margin-bottom: 15px; }
+    label { display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
     input[type="text"] {
       width: 100%;
-      padding: 8px;
+      padding: 12px;
       background: #1c2126;
-      border: 1px solid #333;
-      color: #fff;
-      border-radius: 4px;
+      border: 1px solid #444;
+      color: white;
+      border-radius: 6px;
+      font-size: 16px;
     }
 
-    .color-input { display: flex; gap: 5px; align-items: center; }
-    input[type="color"] { background: none; border: none; cursor: pointer; width: 40px; }
-
-    .actions { display: flex; gap: 10px; margin-bottom: 20px; }
-    button {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 4px;
+    .color-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    input[type="color"] {
+      width: 100%;
+      height: 40px;
+      background: none;
+      border: 1px solid #444;
       cursor: pointer;
+      border-radius: 6px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+      background: #e67e22;
+      color: white;
+      border: none;
+      border-radius: 6px;
       font-weight: bold;
-      font-size: 13px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-transform: uppercase;
     }
 
-    .btn-copy { background: #2d7cff; color: white; }
-    .btn-save { background: #27ae60; color: white; }
-    .btn-download { background: #e67e22; color: white; }
-    .add-color { background: #34495e; color: white; width: 100%; margin-bottom: 10px; }
-    .delete { background: #c0392b; color: white; padding: 2px 8px; font-size: 10px; }
-
-    .color-card {
-      background: #161b20;
-      padding: 10px;
-      border-radius: 4px;
-      margin-bottom: 10px;
-    }
-    
-    .color-card header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-
-    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    button:hover { background: #d35400; }
   </style>
 </head>
 <body>
@@ -112,166 +111,93 @@
   <h1>Prefix Generator</h1>
 
   <div class="container">
-    <div class="preview">
-      <div id="previewText" class="prefix-box">CREATOR</div>
-    </div>
-
-    <div class="actions">
-      <button class="btn-copy" onclick="copyText()">Inhalt kopieren</button>
-      <button class="btn-save" onclick="saveLocal()">Preset speichern</button>
-      <button class="btn-download" onclick="downloadPNG()">Download PNG (8px High)</button>
+    <div class="preview-area">
+      <div id="prefixPreview" class="prefix-box">OWNER</div>
     </div>
 
     <div class="panel">
-      <div class="grid">
-        <div>
-          <div class="color-row">
-            <label>Text</label>
-            <input type="text" id="rankName" value="Creator" oninput="updatePreview()">
-          </div>
+      <div class="input-group">
+        <label>Prefix Text</label>
+        <input type="text" id="inputText" value="OWNER" maxlength="16" oninput="updateUI()">
+      </div>
 
-          <div class="color-row">
-            <label>Schriftfarbe</label>
-            <div class="color-input">
-              <input type="text" id="textHex" value="#ffffff" oninput="updatePreview()">
-              <input type="color" id="textColorPicker" value="#ffffff" oninput="textHex.value=this.value;updatePreview()">
-            </div>
-          </div>
-
-          <div class="color-row">
-            <label>Schatten (HEX + Alpha)</label>
-            <div class="color-input">
-              <input type="text" id="shadowHex" value="#00000088" oninput="updatePreview()">
-              <input type="color" id="shadowColorPicker" value="#000000" oninput="updateShadowHex(this.value)">
-            </div>
-          </div>
+      <div class="color-controls">
+        <div class="input-group">
+          <label>Rahmen & Text</label>
+          <input type="color" id="accentColor" value="#ff0000" oninput="updateUI()">
         </div>
-
-        <div>
-          <label>Hintergrund Verlauf</label>
-          <button class="add-color" onclick="addColor()">+ Farbe hinzufügen</button>
-          <div id="colors"></div>
+        <div class="input-group">
+          <label>Hintergrund</label>
+          <input type="color" id="bgColor" value="#000000" oninput="updateUI()">
         </div>
       </div>
+
+      <button onclick="downloadPNG()">Download PNG (8px hoch)</button>
     </div>
   </div>
 
   <script>
-    let colors = ['#e91e63', '#2196f3'];
-
-    function updateShadowHex(val) {
-      document.getElementById('shadowHex').value = val + "88"; 
-      updatePreview();
-    }
-
-    function renderColors() {
-      const wrap = document.getElementById('colors');
-      wrap.innerHTML = '';
-      colors.forEach((c, i) => {
-        wrap.innerHTML += `
-          <div class="color-card">
-            <header>
-              <small>Farbe ${i + 1}</small>
-              ${colors.length > 1 ? `<button class="delete" onclick="removeColor(${i})">X</button>` : ''}
-            </header>
-            <div class="color-input">
-              <input type="text" value="${c}" oninput="colors[${i}]=this.value;updatePreview()">
-              <input type="color" value="${c}" oninput="colors[${i}]=this.value;renderColors();updatePreview()">
-            </div>
-          </div>`;
-      });
-    }
-
-    function updatePreview() {
-      const text = document.getElementById('rankName').value.toUpperCase();
-      const shadow = document.getElementById('shadowHex').value;
-      const textColor = document.getElementById('textHex').value;
-      const preview = document.getElementById('previewText');
-
-      preview.textContent = text;
-      preview.style.color = textColor;
-      // Schatten für 8px Design sehr dezent halten
-      preview.style.textShadow = `1px 1px 0px ${shadow}`;
+    function updateUI() {
+      const text = document.getElementById('inputText').value.toUpperCase();
+      const color = document.getElementById('accentColor').value;
+      const bg = document.getElementById('bgColor').value;
       
-      if(colors.length > 1) {
-        preview.style.background = `linear-gradient(90deg, ${colors.join(',')})`;
-      } else {
-        preview.style.background = colors[0];
-      }
-    }
-
-    function addColor() {
-      colors.push('#ffcc00');
-      renderColors();
-      updatePreview();
-    }
-
-    function removeColor(i) {
-      colors.splice(i, 1);
-      renderColors();
-      updatePreview();
+      const preview = document.getElementById('prefixPreview');
+      preview.textContent = text;
+      preview.style.borderColor = color;
+      preview.style.color = "#ffffff"; // Text bleibt weiß wie im Bild
+      preview.style.backgroundColor = bg + "cc"; // Leicht transparent
+      
+      document.documentElement.style.setProperty('--accent', color);
     }
 
     function downloadPNG() {
+      const text = document.getElementById('inputText').value.toUpperCase();
+      const accent = document.getElementById('accentColor').value;
+      const bg = document.getElementById('bgColor').value;
+
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      const text = document.getElementById('rankName').value.toUpperCase();
+
+      // Font setzen für Messung
+      ctx.font = "8px 'Silkscreen'";
+      const textWidth = Math.ceil(ctx.measureText(text).width);
       
-      // 1. Wichtig für Pixel-Art: Glättung aus!
-      ctx.imageSmoothingEnabled = false;
-      
-      // Font setzen um Breite zu messen
-      ctx.font = "bold 8px 'Silkscreen', sans-serif";
-      const metrics = ctx.measureText(text);
-      const textWidth = Math.ceil(metrics.width);
-      
-      // Canvas Größe: Exakt 8 Pixel hoch
-      canvas.width = textWidth + 6; 
+      // Canvas Setup (Exakt 8px hoch)
+      canvas.width = textWidth + 6; // +6 für Rahmen und minimales Padding
       canvas.height = 8;
 
-      // Hintergrund zeichnen
-      const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
-      colors.forEach((c, i) => grad.addColorStop(i / (colors.length - 1 || 1), c));
-      ctx.fillStyle = grad;
+      // 1. Pixel-Art Modus aktivieren
+      ctx.imageSmoothingEnabled = false;
+
+      // 2. Hintergrund zeichnen
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Text zeichnen
-      ctx.font = "bold 8px 'Silkscreen', sans-serif";
-      ctx.textBaseline = "middle";
+      // 3. Rahmen zeichnen (1px breit)
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1;
+      // strokeRect zeichnet auf der Linie, daher 0.5 Versatz für scharfe Pixel
+      ctx.strokeRect(0.5, 0.5, canvas.width - 1, canvas.height - 1);
+
+      // 4. Text zeichnen
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "8px 'Silkscreen'";
       ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
       
-      // Schatten manuell zeichnen für volle Kontrolle
-      ctx.fillStyle = document.getElementById('shadowHex').value;
-      ctx.fillText(text, (canvas.width/2) + 0.5, 4.5); 
+      // Text leicht nach rechts/unten korrigieren für 8px Raster
+      ctx.fillText(text, canvas.width / 2, 4.5);
 
-      // Haupttext
-      ctx.fillStyle = document.getElementById('textHex').value;
-      ctx.fillText(text, canvas.width/2, 4);
-
-      // Download
+      // 5. Download auslösen
       const link = document.createElement('a');
       link.download = `prefix_${text.toLowerCase()}.png`;
       link.href = canvas.toDataURL('image/png');
       link.click();
     }
 
-    function copyText() {
-      navigator.clipboard.writeText(document.getElementById('rankName').value);
-      alert('Text kopiert!');
-    }
-
-    function saveLocal() {
-      const data = { colors, text: document.getElementById('rankName').value };
-      localStorage.setItem('pixel_prefix_settings', JSON.stringify(data));
-      alert('Einstellungen lokal gespeichert!');
-    }
-
-    // Initialisierung
-    window.onload = () => {
-        renderColors();
-        // Kurz warten bis Font geladen ist für korrekte Vorschau
-        setTimeout(updatePreview, 100);
-    };
+    // Initiale Vorschau
+    window.onload = updateUI;
   </script>
 </body>
 </html>
