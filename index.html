@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -50,14 +50,17 @@
     }
 
     .prefix-box {
-      display: inline-block;
-      padding: 16px 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      height: 8px;
       font-weight: 800;
-      font-size: 42px;
+      font-size: 8px;
       letter-spacing: 1px;
       background: linear-gradient(90deg, var(--accent), var(--accent-2));
       color: white;
-      text-shadow: 3px 3px 0 rgba(0,0,0,.35);
+      text-shadow: 1px 1px 0 rgba(0,0,0,.6);
     }
 
     .actions {
@@ -176,8 +179,8 @@
 
     <div class="actions">
       <button class="btn-copy" onclick="copyText()">Copy</button>
-      <button class="btn-clear" onclick="resetAll()">Clear</button>
       <button class="btn-save" onclick="saveLocal()">Save</button>
+      <button class="btn-copy" onclick="downloadPNG()">Download PNG (8px)</button>
     </div>
 
     <div class="panel">
@@ -225,14 +228,14 @@
       wrap.innerHTML = '';
       colors.forEach((c, i) => {
         wrap.innerHTML += `
-          <div class="color-card">
+          <div class=\"color-card\">
             <header>
               <strong>Background Color ${i + 1}</strong>
-              <button class="delete" onclick="removeColor(${i})">🗑</button>
+              <button class=\"delete\" onclick=\"removeColor(${i})\">🗑</button>
             </header>
-            <div class="color-input">
-              <input type="text" value="${c}" oninput="colors[${i}]=this.value;updatePreview()">
-              <input type="color" value="${c}" oninput="colors[${i}]=this.value;renderColors();updatePreview()">
+            <div class=\"color-input\">
+              <input type=\"text\" value=\"${c}\" oninput=\"colors[${i}]=this.value;updatePreview()\">
+              <input type=\"color\" value=\"${c}\" oninput=\"colors[${i}]=this.value;renderColors();updatePreview()\">
             </div>
           </div>`;
       });
@@ -247,7 +250,7 @@
 
       preview.textContent = text;
       preview.style.color = textColor;
-      preview.style.textShadow = `4px 4px 0 ${shadow}`;
+      preview.style.textShadow = `1px 1px 0 ${shadow}`;
       preview.style.background = `linear-gradient(90deg, ${colors.join(',')})`;
     }
 
@@ -268,14 +271,43 @@
       alert('Copied!');
     }
 
-    function resetAll() {
-      document.getElementById('rankName').value = '';
-      updatePreview();
+    function saveLocal() {
+      const data = {
+        text: document.getElementById('previewText').textContent,
+        colors: colors,
+        shadow: document.getElementById('shadowHex').value,
+        textColor: document.getElementById('textHex').value
+      };
+      localStorage.setItem('prefix-generator', JSON.stringify(data));
+      alert('Preset gespeichert');
     }
 
-    function saveLocal() {
-      localStorage.setItem('prefix', document.getElementById('previewText').textContent);
-      alert('Saved locally');
+    function downloadPNG() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const text = document.getElementById('previewText').textContent;
+
+      ctx.font = '8px Inter, sans-serif';
+      const textWidth = ctx.measureText(text).width;
+
+      canvas.width = Math.ceil(textWidth + 8);
+      canvas.height = 8;
+
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      colors.forEach((c, i) => grad.addColorStop(i / (colors.length - 1), c));
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = document.getElementById('textHex').value;
+      ctx.font = '8px Inter, sans-serif';
+      ctx.textBaseline = 'top';
+      ctx.fillText(text, 4, 0);
+
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = 'prefix.png';
+      a.click();
     }
 
     renderColors();
