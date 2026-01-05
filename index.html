@@ -1,219 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prefix Generator</title>
+  <title>Pixel Prefix Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #1f2428;
       --panel: #0f1113;
-      --panel-2: #14171a;
-      --accent: #00aaff;
-      --accent-2: #00ccff;
       --text: #e6e6e6;
       --muted: #9aa4ad;
-      --danger: #e74c3c;
-      --success: #2ecc71;
+      --accent: #00aaff;
     }
 
-    * { box-sizing: border-box; font-family: Inter, system-ui, sans-serif; }
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
     body {
       margin: 0;
-      background: linear-gradient(180deg, #22272b, #1b1f23);
+      background: #1b1f23;
       color: var(--text);
+      padding-bottom: 50px;
     }
 
-    h1 {
-      text-align: center;
-      font-weight: 700;
-      margin: 28px 0 16px;
-    }
+    h1 { text-align: center; margin: 30px 0; font-family: 'Silkscreen', sans-serif; }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto 60px;
-      padding: 0 20px;
-    }
+    .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
 
+    /* PREVIEW BEREICH - WICHTIG FÜR DEN LOOK */
     .preview {
-      background: radial-gradient(120% 120% at 50% 0%, #111, #000);
-      border-radius: 10px;
-      padding: 28px;
-      box-shadow: 0 10px 40px rgba(0,0,0,.5);
-      margin-bottom: 18px;
-      text-align: center;
+      background: #000;
+      border-radius: 8px;
+      padding: 40px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      image-rendering: pixelated; /* Erhält Pixelkanten im Browser */
     }
 
     .prefix-box {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 12px;
-      height: 8px;
-      font-weight: 800;
+      display: inline-block;
+      padding: 0 4px;
+      height: 10px; /* Etwas Puffer für die 8px Schrift */
+      line-height: 10px;
+      font-family: 'Silkscreen', sans-serif;
       font-size: 8px;
-      letter-spacing: 1px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      font-weight: 700;
+      text-transform: uppercase;
+      white-space: nowrap;
       color: white;
-      text-shadow: 1px 1px 0 rgba(0,0,0,.6);
+      -webkit-font-smoothing: none; /* Deaktiviert Schriftglättung */
     }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-
-    button {
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-copy { background: #2d7cff; color: white; }
-    .btn-clear { background: #e05666; color: white; }
-    .btn-save { background: #27ae60; color: white; }
 
     .panel {
-      background: linear-gradient(180deg, #0b0d0f, #060708);
+      background: #0f1113;
       border-radius: 10px;
-      padding: 24px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+      padding: 25px;
+      border: 1px solid #2a2f34;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 26px;
-    }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
 
-    label {
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 6px;
-      display: block;
-    }
+    .color-row { margin-bottom: 15px; }
+    label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 5px; }
 
     input[type="text"] {
       width: 100%;
-      padding: 10px 12px;
-      border-radius: 6px;
-      border: 1px solid #2a2f34;
+      padding: 8px;
       background: #1c2126;
-      color: var(--text);
+      border: 1px solid #333;
+      color: #fff;
+      border-radius: 4px;
     }
 
-    .color-row { margin-bottom: 16px; }
+    .color-input { display: flex; gap: 5px; align-items: center; }
+    input[type="color"] { background: none; border: none; cursor: pointer; width: 40px; }
 
-    .color-input {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    input[type="color"] {
-      width: 44px;
-      height: 36px;
+    .actions { display: flex; gap: 10px; margin-bottom: 20px; }
+    button {
+      padding: 10px 15px;
       border: none;
-      background: none;
-      padding: 0;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 13px;
     }
 
-    .right-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 12px;
-    }
-
-    .add-color {
-      background: #1f8f4d;
-      color: white;
-    }
+    .btn-copy { background: #2d7cff; color: white; }
+    .btn-save { background: #27ae60; color: white; }
+    .btn-download { background: #e67e22; color: white; }
+    .add-color { background: #34495e; color: white; width: 100%; margin-bottom: 10px; }
+    .delete { background: #c0392b; color: white; padding: 2px 8px; font-size: 10px; }
 
     .color-card {
-      background: #0f1316;
-      border-radius: 8px;
-      padding: 14px;
-      margin-bottom: 14px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
-    }
-
-    .color-card header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background: #161b20;
+      padding: 10px;
+      border-radius: 4px;
       margin-bottom: 10px;
     }
+    
+    .color-card header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
 
-    .delete {
-      background: var(--danger);
-      color: white;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-    }
-
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
+
   <h1>Prefix Generator</h1>
 
   <div class="container">
     <div class="preview">
-      <div id="previewText" class="prefix-box">ARTILLEX-STUDIOS</div>
+      <div id="previewText" class="prefix-box">CREATOR</div>
     </div>
 
     <div class="actions">
-      <button class="btn-copy" onclick="copyText()">Copy</button>
-      <button class="btn-save" onclick="saveLocal()">Save</button>
-      <button class="btn-copy" onclick="downloadPNG()">Download PNG (8px)</button>
+      <button class="btn-copy" onclick="copyText()">Inhalt kopieren</button>
+      <button class="btn-save" onclick="saveLocal()">Preset speichern</button>
+      <button class="btn-download" onclick="downloadPNG()">Download PNG (8px High)</button>
     </div>
 
     <div class="panel">
       <div class="grid">
         <div>
           <div class="color-row">
-            <label>Rank Name</label>
-            <input type="text" id="rankName" value="Artillex-Studios" oninput="updatePreview()">
+            <label>Text</label>
+            <input type="text" id="rankName" value="Creator" oninput="updatePreview()">
           </div>
 
           <div class="color-row">
-            <label>Shadow Color</label>
+            <label>Schriftfarbe</label>
             <div class="color-input">
-              <input type="text" id="shadowHex" value="#22222244" oninput="updatePreview()">
-              <input type="color" value="#222222" oninput="shadowHex.value=this.value;updatePreview()">
+              <input type="text" id="textHex" value="#ffffff" oninput="updatePreview()">
+              <input type="color" id="textColorPicker" value="#ffffff" oninput="textHex.value=this.value;updatePreview()">
             </div>
           </div>
 
           <div class="color-row">
-            <label>Text Color</label>
+            <label>Schatten (HEX + Alpha)</label>
             <div class="color-input">
-              <input type="text" id="textHex" value="#ffffff" oninput="updatePreview()">
-              <input type="color" value="#ffffff" oninput="textHex.value=this.value;updatePreview()">
+              <input type="text" id="shadowHex" value="#00000088" oninput="updatePreview()">
+              <input type="color" id="shadowColorPicker" value="#000000" oninput="updateShadowHex(this.value)">
             </div>
           </div>
         </div>
 
         <div>
-          <div class="right-header">
-            <button class="add-color" onclick="addColor()">Add New Color</button>
-            <span id="colorCount">2 colors</span>
-          </div>
-
+          <label>Hintergrund Verlauf</label>
+          <button class="add-color" onclick="addColor()">+ Farbe hinzufügen</button>
           <div id="colors"></div>
         </div>
       </div>
@@ -221,25 +157,29 @@
   </div>
 
   <script>
-    const colors = ['#00aaff', '#00ccff'];
+    let colors = ['#e91e63', '#2196f3'];
+
+    function updateShadowHex(val) {
+      document.getElementById('shadowHex').value = val + "88"; 
+      updatePreview();
+    }
 
     function renderColors() {
       const wrap = document.getElementById('colors');
       wrap.innerHTML = '';
       colors.forEach((c, i) => {
         wrap.innerHTML += `
-          <div class=\"color-card\">
+          <div class="color-card">
             <header>
-              <strong>Background Color ${i + 1}</strong>
-              <button class=\"delete\" onclick=\"removeColor(${i})\">🗑</button>
+              <small>Farbe ${i + 1}</small>
+              ${colors.length > 1 ? `<button class="delete" onclick="removeColor(${i})">X</button>` : ''}
             </header>
-            <div class=\"color-input\">
-              <input type=\"text\" value=\"${c}\" oninput=\"colors[${i}]=this.value;updatePreview()\">
-              <input type=\"color\" value=\"${c}\" oninput=\"colors[${i}]=this.value;renderColors();updatePreview()\">
+            <div class="color-input">
+              <input type="text" value="${c}" oninput="colors[${i}]=this.value;updatePreview()">
+              <input type="color" value="${c}" oninput="colors[${i}]=this.value;renderColors();updatePreview()">
             </div>
           </div>`;
       });
-      document.getElementById('colorCount').textContent = `${colors.length} colors`;
     }
 
     function updatePreview() {
@@ -250,12 +190,18 @@
 
       preview.textContent = text;
       preview.style.color = textColor;
-      preview.style.textShadow = `1px 1px 0 ${shadow}`;
-      preview.style.background = `linear-gradient(90deg, ${colors.join(',')})`;
+      // Schatten für 8px Design sehr dezent halten
+      preview.style.textShadow = `1px 1px 0px ${shadow}`;
+      
+      if(colors.length > 1) {
+        preview.style.background = `linear-gradient(90deg, ${colors.join(',')})`;
+      } else {
+        preview.style.background = colors[0];
+      }
     }
 
     function addColor() {
-      colors.push('#00ffff');
+      colors.push('#ffcc00');
       renderColors();
       updatePreview();
     }
@@ -266,52 +212,66 @@
       updatePreview();
     }
 
-    function copyText() {
-      navigator.clipboard.writeText(document.getElementById('previewText').textContent);
-      alert('Copied!');
-    }
-
-    function saveLocal() {
-      const data = {
-        text: document.getElementById('previewText').textContent,
-        colors: colors,
-        shadow: document.getElementById('shadowHex').value,
-        textColor: document.getElementById('textHex').value
-      };
-      localStorage.setItem('prefix-generator', JSON.stringify(data));
-      alert('Preset gespeichert');
-    }
-
     function downloadPNG() {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      const text = document.getElementById('previewText').textContent;
-
-      ctx.font = '8px Inter, sans-serif';
-      const textWidth = ctx.measureText(text).width;
-
-      canvas.width = Math.ceil(textWidth + 8);
+      const text = document.getElementById('rankName').value.toUpperCase();
+      
+      // 1. Wichtig für Pixel-Art: Glättung aus!
+      ctx.imageSmoothingEnabled = false;
+      
+      // Font setzen um Breite zu messen
+      ctx.font = "bold 8px 'Silkscreen', sans-serif";
+      const metrics = ctx.measureText(text);
+      const textWidth = Math.ceil(metrics.width);
+      
+      // Canvas Größe: Exakt 8 Pixel hoch
+      canvas.width = textWidth + 6; 
       canvas.height = 8;
 
+      // Hintergrund zeichnen
       const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
-      colors.forEach((c, i) => grad.addColorStop(i / (colors.length - 1), c));
-
+      colors.forEach((c, i) => grad.addColorStop(i / (colors.length - 1 || 1), c));
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = document.getElementById('textHex').value;
-      ctx.font = '8px Inter, sans-serif';
-      ctx.textBaseline = 'top';
-      ctx.fillText(text, 4, 0);
+      // Text zeichnen
+      ctx.font = "bold 8px 'Silkscreen', sans-serif";
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+      
+      // Schatten manuell zeichnen für volle Kontrolle
+      ctx.fillStyle = document.getElementById('shadowHex').value;
+      ctx.fillText(text, (canvas.width/2) + 0.5, 4.5); 
 
-      const a = document.createElement('a');
-      a.href = canvas.toDataURL('image/png');
-      a.download = 'prefix.png';
-      a.click();
+      // Haupttext
+      ctx.fillStyle = document.getElementById('textHex').value;
+      ctx.fillText(text, canvas.width/2, 4);
+
+      // Download
+      const link = document.createElement('a');
+      link.download = `prefix_${text.toLowerCase()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
     }
 
-    renderColors();
-    updatePreview();
+    function copyText() {
+      navigator.clipboard.writeText(document.getElementById('rankName').value);
+      alert('Text kopiert!');
+    }
+
+    function saveLocal() {
+      const data = { colors, text: document.getElementById('rankName').value };
+      localStorage.setItem('pixel_prefix_settings', JSON.stringify(data));
+      alert('Einstellungen lokal gespeichert!');
+    }
+
+    // Initialisierung
+    window.onload = () => {
+        renderColors();
+        // Kurz warten bis Font geladen ist für korrekte Vorschau
+        setTimeout(updatePreview, 100);
+    };
   </script>
 </body>
 </html>
