@@ -1,94 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ItemsAdder Rank Generator</title>
+    <title>ItemsAdder Pixel-Perfect Fix</title>
     <style>
-        body { background-color: #121212; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { background-color: #1e1e1e; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); text-align: center; }
-        canvas { image-rendering: pixelated; background-color: #000; border: 1px solid #333; margin-bottom: 1rem; width: 300px; height: auto; }
-        input, select { width: 100%; padding: 0.5rem; margin-bottom: 1rem; border-radius: 4px; border: 1px solid #333; background-color: #2d2d2d; color: white; }
-        button { background-color: #4CAF50; border: none; color: white; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; }
-        button:hover { background-color: #45a049; }
-        label { display: block; text-align: left; margin-bottom: 0.25rem; font-size: 0.9rem; color: #aaa; }
+        /* Wir laden die Schriftart direkt, um Verzögerungen zu vermeiden */
+        @font-face {
+            font-family: 'Minecraftia';
+            src: url('https://raw.githubusercontent.com/ItemsAdder/minecraft-rank-generator/main/assets/minecraft.ttf');
+        }
+
+        body { background: #111; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        
+        .card { background: #1e1e1e; padding: 20px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 350px; }
+        
+        /* Das ist der wichtigste Teil für die Vorschau */
+        .preview-container {
+            background: #000;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+        }
+
+        canvas {
+            image-rendering: pixelated; /* KEIN MATSCH */
+            image-rendering: crisp-edges;
+            transform: scale(8); /* Wir skalieren es nur optisch hoch */
+            display: block;
+        }
+
+        .inputs { display: flex; flex-direction: column; gap: 10px; text-align: left; }
+        input { background: #2d2d2d; border: 1px solid #444; color: white; padding: 8px; border-radius: 4px; }
+        label { font-size: 11px; color: #888; text-transform: uppercase; }
+        
+        button { 
+            margin-top: 20px; width: 100%; padding: 12px; background: #27ae60; 
+            border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>ItemsAdder Generator</h2>
-    <canvas id="canvas" width="40" height="8"></canvas>
-    
-    <label>Rank Text</label>
-    <input type="text" id="text" value="ADMIN" maxlength="12">
-    
-    <label>Border Color (HEX)</label>
-    <input type="text" id="borderColor" value="#FF0000">
-    
-    <label>Background Color (HEX)</label>
-    <input type="text" id="bgColor" value="#4D0000">
+<div class="card">
+    <div class="preview-container">
+        <canvas id="canvas" width="40" height="8"></canvas>
+    </div>
 
-    <button id="download">Download PNG</button>
+    <div class="inputs">
+        <label>Text</label>
+        <input type="text" id="rankText" value="CREATOR" maxlength="12">
+        
+        <label>Rahmen (HEX)</label>
+        <input type="text" id="borderColor" value="#1C517B">
+        
+        <label>Hintergrund (HEX)</label>
+        <input type="text" id="bgColor" value="#4D0000">
+    </div>
+
+    <button id="downloadBtn">PNG HERUNTERLADEN</button>
 </div>
 
 <script>
-    // 1-zu-1 Logik aus dem ItemsAdder Repository
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    const textInput = document.getElementById('text');
-    const borderInput = document.getElementById('borderColor');
-    const bgInput = document.getElementById('bgColor');
-    const downloadBtn = document.getElementById('download');
+    const rankTextInput = document.getElementById('rankText');
+    const borderColorInput = document.getElementById('borderColor');
+    const bgColorInput = document.getElementById('bgColor');
 
-    // WICHTIG: Minecraft Font laden
-    const font = new FontFace('Minecraft', 'url(https://raw.githubusercontent.com/ItemsAdder/minecraft-rank-generator/main/assets/minecraft.ttf)');
-    
-    font.load().then((loadedFont) => {
-        document.fonts.add(loadedFont);
-        render();
-    });
-
-    function render() {
-        const text = textInput.value.toUpperCase();
-        ctx.font = '8px Minecraft';
-        const textMetrics = ctx.measureText(text);
+    function draw() {
+        const text = rankTextInput.value.toUpperCase();
         
-        // Canvas Größe dynamisch anpassen (8px Höhe ist Pflicht für ItemsAdder)
-        canvas.width = Math.ceil(textMetrics.width) + 4;
+        // Anti-Aliasing global abschalten
+        ctx.imageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.mozImageSmoothingEnabled = false;
+
+        // Font setzen und messen
+        ctx.font = "8px 'Minecraftia', sans-serif";
+        const metrics = ctx.measureText(text);
+        const textWidth = Math.ceil(metrics.width);
+        
+        // Canvas Größe anpassen (8px hoch ist Gesetz)
+        canvas.width = textWidth + 4;
         canvas.height = 8;
 
-        // Pixel-Modus ohne Glättung
+        // Erneut abschalten nach Größenänderung
         ctx.imageSmoothingEnabled = false;
 
-        // Hintergrund zeichnen
-        ctx.fillStyle = bgInput.value;
+        // 1. Hintergrund
+        ctx.fillStyle = bgColorInput.value;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Rahmen zeichnen
-        ctx.strokeStyle = borderInput.value;
+        // 2. Rahmen (Pixel-genau)
+        ctx.strokeStyle = borderColorInput.value;
         ctx.lineWidth = 1;
         ctx.strokeRect(0.5, 0.5, canvas.width - 1, canvas.height - 1);
 
-        // Schatten zeichnen (Offset 1px)
-        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        // 3. Schatten (Der Minecraft-Look)
+        ctx.fillStyle = "rgba(0,0,0,0.7)";
         ctx.fillText(text, 2.5, 7.5);
 
-        // Text zeichnen
-        ctx.fillStyle = '#FFFFFF';
+        // 4. Haupttext (Weiß)
+        ctx.fillStyle = "#FFFFFF";
         ctx.fillText(text, 2, 7);
     }
 
-    textInput.addEventListener('input', render);
-    borderInput.addEventListener('input', render);
-    bgInput.addEventListener('input', render);
+    // Event Listener
+    [rankTextInput, borderColorInput, bgColorInput].forEach(el => {
+        el.addEventListener('input', draw);
+    });
 
-    downloadBtn.addEventListener('click', () => {
+    document.getElementById('downloadBtn').onclick = function() {
         const link = document.createElement('a');
         link.download = 'rank.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
-    });
+    };
+
+    // Warten bis Font geladen ist, dann starten
+    document.fonts.ready.then(draw);
 </script>
 
 </body>
